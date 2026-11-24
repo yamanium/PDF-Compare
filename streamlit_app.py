@@ -19,7 +19,6 @@ from typing import Any
 import fitz
 import numpy as np
 import streamlit as st
-import streamlit.components.v1 as components
 from sklearn.decomposition import NMF
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -29,6 +28,7 @@ st.set_page_config(page_title="PDF草案比較", layout="wide", page_icon="📄"
 APP_DIR = Path(__file__).resolve().parent
 AUTOSAVE_PATH = APP_DIR / ".pdf_compare_autosave.zip"
 DEFAULT_PDFS_DIR = APP_DIR / "documents"
+TRAINING_SEED_PATH = APP_DIR / "training_data_seed.json"
 FORMAT = "pdf-compare-project-v2"
 CSS = """
 <style>
@@ -543,6 +543,30 @@ def project_bundle() -> bytes:
     return buf.getvalue()
 
 
+def project_content_fingerprint() -> str:
+    project = project_object()
+    state = project["ui_state"]
+    content = {
+        "versions": project["versions"],
+        "selection": {key: state.get(key) for key in ("base_id", "target_ids")},
+        "classification": {key: state.get(key) for key in (
+            "active_topic_mode", "topic_count", "topic_membership_threshold", "threshold",
+            "topic_primary", "topic_membership", "topic_scores", "topic_summary", "topic_renames",
+            "custom_topics", "training_data", "manual_topic_overrides")},
+        "editing": {key: state.get(key) for key in (
+            "alignment_overrides", "placement_overrides", "manual_order", "watch", "manual_highlights")},
+    }
+    encoded = json.dumps(content, ensure_ascii=False, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def render_project_download_button(label: str, key: str) -> None:
+    if st.download_button(label, project_bundle(), "pdf_compare_project.zip", "application/zip", key=key,
+                          type="primary", width="stretch"):
+        st.session_state.last_saved_content_fingerprint = project_content_fingerprint()
+        st.toast("プロジェクトZIPをダウンロードしました。")
+
+
 def restore_project(raw: bytes) -> None:
     widget_keys = ["base_select", "target_select", "visible_version_ids", "compare_search", "compare_topic_filter", "hide_memo", "edit_memo_inline", "manual_tag_mode", "manual_highlight_mode", "show_watch_inline", "show_watch_toggle", "show_changes", "show_sections", "jump_para_number", "topic_membership_threshold",
                    "active_view", "alignment_target", "placement_edit_pid", "placement_link", "placement_anchor",
@@ -788,20 +812,35 @@ def render_compare_paragraph(paragraph: dict[str, Any], display_text: str, versi
 def init_state() -> None:
     if st.session_state.pop("clear_on_next_run", False):
         bundled_already_loaded = st.session_state.get("_bundled_documents_loaded", False)
+        training_already_loaded = st.session_state.get("_seed_training_loaded", False)
         for key in list(st.session_state.keys()):
             del st.session_state[key]
         if bundled_already_loaded:
             st.session_state._bundled_documents_loaded = True
+        if training_already_loaded:
+            st.session_state._seed_training_loaded = True
     defaults = {"versions": [], "topic_count": 6, "topic_membership_threshold": .18, "threshold": .20, "active_topic_mode": "automatic",
                 "topic_primary": {}, "topic_membership": {}, "topic_scores": {}, "topic_summary": [],
                 "topic_quality": {}, "topic_renames": {}, "custom_topics": [], "training_data": [],
                 "manual_topic_overrides": {}, "manual_highlights": {}, "manual_tag_mode": False, "manual_highlight_mode": False, "show_watch_inline": False, "show_watch_toggle": True, "watch_quotes": [],
                 "alignment_overrides": {}, "placement_overrides": {}, "manual_order": {}, "watch": [],
                 "target_ids": [], "visible_version_ids": [], "_visible_scope_ids": [], "jump_para_number": "", "jump_para_pending": "",
-                "autosave_enabled": False, "project_restored": False}
+                "autosave_enabled": False, "project_restored": False,
+                "last_saved_content_fingerprint": None, "project_load_error": ""}
     for key, value in defaults.items():
         if key not in st.session_state: st.session_state[key] = value
     if not isinstance(st.session_state.get("watch_quotes"), list): st.session_state.watch_quotes = []
+    if not st.session_state.get("_seed_training_loaded", False):
+        st.session_state._seed_training_loaded = True
+        if TRAINING_SEED_PATH.exists():
+            try:
+                seed = json.loads(TRAINING_SEED_PATH.read_text(encoding="utf-8"))
+                st.session_state.custom_topics = seed.get("custom_topics", [])
+                st.session_state.training_data = seed.get("training_data", [])
+                st.session_state.manual_topic_overrides = seed.get("manual_topic_overrides", {})
+                st.session_state.active_topic_mode = "user"
+            except (OSError, ValueError) as exc:
+                st.sidebar.warning(f"初期学習データを読み込めませんでした: {exc}")
     if not st.session_state.get("_bundled_documents_loaded", False):
         st.session_state._bundled_documents_loaded = True
         if not st.session_state.versions:
@@ -817,80 +856,30 @@ def init_state() -> None:
 
 
 init_state()
+pending_project_bytes = st.session_state.pop("_pending_project_bytes", None)
+if pending_project_bytes:
+    try:
+        restore_project(pending_project_bytes)
+        st.session_state.last_saved_content_fingerprint = project_content_fingerprint()
+        st.session_state.project_load_error = ""
+    except Exception as exc:
+        st.session_state.project_load_error = f"プロジェクトを読み込めませんでした: {exc}"
+st.session_state.autosave_enabled = False
 st.markdown(CSS, unsafe_allow_html=True)
 st.title("PDF草案 比較サイト作成ツール")
-st.caption("複数版のPDFをローカルで解析し、段落比較・トピック分類・Watch付箋付きのHTMLを作ります。本文を外部へ送信しません。")
+st.caption("複数版のPDFを比較し、段落対応・トピック・Watch・メモを管理します。アップロードPDFはこの配備アプリの実行環境で処理します。")
 st.markdown('<div class="app-note"><b>メモ:</b>手入力またはCSVで登録した内容を英文の下に表示します。</div>', unsafe_allow_html=True)
 
 with st.sidebar:
-    st.header("1 · PDFと分析設定")
-    upload_pdfs = st.file_uploader("比較するPDFを追加", type=["pdf"], accept_multiple_files=True, key="pdf_upload")
-    if upload_pdfs and st.button("PDFを読み込む", type="primary", use_container_width=True):
-        known = {v["sha256"] for v in st.session_state.versions}
-        current = st.session_state.versions.copy()
-        errors = []
-        for file in upload_pdfs:
-            raw = file.getvalue()
-            digest = hashlib.sha256(raw).hexdigest()
-            if digest in known:
-                existing = next(v for v in current if v["sha256"] == digest)
-                existing["pdf_bytes"] = existing.get("pdf_bytes") or raw
-                continue
-            try:
-                version = extract_pdf(file.name, raw)
-                current.append(version)
-                known.add(digest)
-            except Exception as exc:
-                errors.append(f"{file.name}: {exc}")
-        st.session_state.versions = current
-        st.session_state.topic_primary = {}
-        st.session_state.topic_membership = {}
-        st.session_state.topic_scores = {}
-        if errors:
-            for error in errors: st.error(error)
-        st.rerun()
+    st.markdown("### 作業画面")
+    active_view = st.radio(
+        "作業画面", ["比較", "トピックと学習", "Watch付箋", "メモ", "出力・保存"],
+        key="active_view", label_visibility="collapsed")
 
-    st.session_state.autosave_enabled = False
-    st.caption("配備版ではサーバー共通の自動保存を停止しています。作業を残す場合はプロジェクトZIPをダウンロードしてください。")
-    if st.session_state.versions:
-        st.caption(f"読み込み済み: {len(st.session_state.versions)}版 / 最大4版を同時比較")
-        with st.expander("版名を編集"):
-            for version in st.session_state.versions:
-                version["name"] = st.text_input(version["filename"], value=version["name"], key=f"version_name_{version['id']}")
-        st.session_state.topic_count = st.number_input("自動発見トピック数 n", min_value=2, max_value=30,
-                                                         value=min(30, max(2, int(st.session_state.topic_count))), step=1)
-        st.session_state.topic_membership_threshold = st.slider(
-            "自動マルチタグの確率しきい値", .10, .50, float(st.session_state.topic_membership_threshold), .01,
-            help="しきい値以上のタグを付けます。主トピックは常に含め、最大4タグまで表示します。")
-        mode = st.selectbox("分類方式", ["automatic", "user"], index=0 if st.session_state.active_topic_mode == "automatic" else 1,
-                            format_func=lambda x: "自動発見（NMF）" if x == "automatic" else "ユーザー定義（訂正例から学習）")
-        if mode != st.session_state.active_topic_mode:
-            st.session_state.active_topic_mode = mode
-            st.session_state.topic_primary = {}
-        st.session_state.threshold = st.slider("段落対応の類似度しきい値", .08, .55, float(st.session_state.threshold), .01,
-                                                 help="低い類似度の段落は既存段落へ無理に結び付けず、新設行にします。")
-        if st.button("トピック分類を更新", use_container_width=True):
-            with st.spinner("ローカルで分類しています…"): recalculate_topics()
-        if st.button("全データをクリア", use_container_width=True):
-            st.session_state.clear_on_next_run = True
-            if AUTOSAVE_PATH.exists(): AUTOSAVE_PATH.unlink()
-            st.rerun()
-    st.divider()
-    st.subheader("プロジェクトを開く")
-    project_file = st.file_uploader("ZIPまたはJSONを読込", type=["zip", "json"], key="project_upload")
-    if project_file and st.button("プロジェクトを復元"):
-        try:
-            restore_project(project_file.getvalue())
-            st.rerun()
-        except Exception as exc: st.error(f"読込に失敗しました: {exc}")
-
-    st.divider()
-    active_view = st.radio("作業画面", ["比較", "トピックと学習", "Watch付箋", "メモ", "出力・保存"],
-                           key="active_view", label_visibility="visible")
     if active_view == "比較":
-        st.subheader("比較の操作")
-        jump_para_number = st.text_input("Para番号へ移動", key="jump_para_number", placeholder="例: 23")
-        if st.button("一番左の版のParaへ移動", use_container_width=True):
+        st.markdown("#### 段落を探す")
+        jump_para_number = st.text_input("Para番号", key="jump_para_number", placeholder="例: 23")
+        if st.button("一番左の版のParaへ移動", width="stretch"):
             if jump_para_number.strip():
                 st.session_state.jump_para_pending = jump_para_number.strip()
             else:
@@ -898,14 +887,85 @@ with st.sidebar:
         search = st.text_input("本文・メモ・段落番号を検索", key="compare_search")
         topic_options = [""] + sorted({label for labels in st.session_state.topic_membership.values() for label in labels})
         selected_topic = st.selectbox("トピック", topic_options, format_func=lambda x: x or "すべて", key="compare_topic_filter")
-        hide_memo = st.checkbox("メモを隠す", key="hide_memo")
-        edit_memo = st.checkbox("メモを編集", key="edit_memo_inline")
-        show_sections = st.checkbox("章立てを表示", key="show_sections")
-        show_changes = st.checkbox("変更行のみ", key="show_changes")
-        manual_tag_mode = st.checkbox("手動タグ指定", key="manual_tag_mode")
-        show_watch = st.checkbox("Watchを表示", key="show_watch_inline")
-        manual_highlight_mode = st.checkbox("蛍光ペン", key="manual_highlight_mode")
-        show_watch_toggle = st.checkbox("Watch操作", key="show_watch_toggle")
+        with st.expander("表示・編集の切替", expanded=False):
+            hide_memo = st.checkbox("メモを隠す", key="hide_memo")
+            edit_memo = st.checkbox("メモを編集", key="edit_memo_inline")
+            show_sections = st.checkbox("章立てを表示", key="show_sections")
+            show_changes = st.checkbox("変更行のみ", key="show_changes")
+            manual_tag_mode = st.checkbox("手動タグ指定", key="manual_tag_mode")
+            show_watch = st.checkbox("Watchを表示", key="show_watch_inline")
+            manual_highlight_mode = st.checkbox("蛍光ペン", key="manual_highlight_mode")
+            show_watch_toggle = st.checkbox("Watch操作", key="show_watch_toggle")
+
+    st.divider()
+    with st.expander("プロジェクトを開く／保存", expanded=False):
+        st.caption("保存したZIPを読み込むと、PDFと作業状態を復元します。")
+        project_file = st.file_uploader("プロジェクトZIPまたはJSON", type=["zip", "json"], key="project_upload")
+        if project_file and st.button("プロジェクトを読み込む", width="stretch"):
+            st.session_state._pending_project_bytes = project_file.getvalue()
+            st.rerun()
+        if st.session_state.get("project_load_error"):
+            st.error(st.session_state.project_load_error)
+            st.session_state.project_load_error = ""
+        if st.session_state.versions:
+            render_project_download_button("プロジェクトZIPを保存", "project_save_sidebar")
+            st.caption("ページを閉じる前に保存してください。未保存の編集があると、ブラウザーが確認を表示します。")
+
+    with st.expander("文書・分析の管理", expanded=False):
+        st.caption(f"読み込み済み: {len(st.session_state.versions)}文書 · 同時比較は最大4文書")
+        upload_pdfs = st.file_uploader("追加するPDF", type=["pdf"], accept_multiple_files=True, key="pdf_upload")
+        if upload_pdfs and st.button("PDFを読み込む", type="primary", width="stretch"):
+            known = {v["sha256"] for v in st.session_state.versions}
+            current = st.session_state.versions.copy()
+            errors = []
+            for file in upload_pdfs:
+                raw = file.getvalue()
+                digest = hashlib.sha256(raw).hexdigest()
+                if digest in known:
+                    existing = next(v for v in current if v["sha256"] == digest)
+                    existing["pdf_bytes"] = existing.get("pdf_bytes") or raw
+                    continue
+                try:
+                    version = extract_pdf(file.name, raw)
+                    current.append(version)
+                    known.add(digest)
+                except Exception as exc:
+                    errors.append(f"{file.name}: {exc}")
+            st.session_state.versions = current
+            st.session_state.topic_primary = {}
+            st.session_state.topic_membership = {}
+            st.session_state.topic_scores = {}
+            if errors:
+                for error in errors: st.error(error)
+            st.rerun()
+
+        if st.session_state.versions:
+            with st.expander("版名を編集"):
+                for version in st.session_state.versions:
+                    version["name"] = st.text_input(version["filename"], value=version["name"], key=f"version_name_{version['id']}")
+            st.session_state.topic_count = st.number_input(
+                "自動発見トピック数 n", min_value=2, max_value=30,
+                value=min(30, max(2, int(st.session_state.topic_count))), step=1)
+            st.session_state.topic_membership_threshold = st.slider(
+                "自動マルチタグの確率しきい値", .10, .50, float(st.session_state.topic_membership_threshold), .01,
+                help="しきい値以上のタグを付けます。主トピックは常に含め、最大4タグまで表示します。")
+            mode = st.selectbox("分類方式", ["automatic", "user"],
+                                index=0 if st.session_state.active_topic_mode == "automatic" else 1,
+                                format_func=lambda x: "自動発見（NMF）" if x == "automatic" else "ユーザー定義（訂正例から学習）")
+            if mode != st.session_state.active_topic_mode:
+                st.session_state.active_topic_mode = mode
+                st.session_state.topic_primary = {}
+            st.session_state.threshold = st.slider(
+                "段落対応の類似度しきい値", .08, .55, float(st.session_state.threshold), .01,
+                help="低い類似度の段落は既存段落へ無理に結び付けず、新設行にします。")
+            if st.button("トピック分類を更新", width="stretch"):
+                with st.spinner("ローカルで分類しています…"):
+                    recalculate_topics()
+            if st.button("全データをクリア", width="stretch"):
+                st.session_state.clear_on_next_run = True
+                if AUTOSAVE_PATH.exists(): AUTOSAVE_PATH.unlink()
+                st.rerun()
+
 
 versions = st.session_state.versions
 if not versions:
@@ -941,6 +1001,8 @@ else:
 
 if versions and not st.session_state.topic_primary:
     with st.spinner("初回のトピック分類を実行しています…"): recalculate_topics()
+if versions and st.session_state.last_saved_content_fingerprint is None:
+    st.session_state.last_saved_content_fingerprint = project_content_fingerprint()
 if not st.session_state.topic_summary and st.session_state.active_topic_mode == "user":
     st.info("ユーザー定義モードは、トピックとユーザー訂正例を登録すると分類を学習します。")
 
@@ -1039,7 +1101,7 @@ if active_view == "比較":
                                                          manual_tag_mode, tag_options, manual_highlight_mode, hide_memo, edit_memo, jump_target)
             if jump_number:
                 if jump_found:
-                    components.html("""<script>const target=window.parent.document.getElementById('para-jump-target');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});</script>""", height=0)
+                    st.html("""<script>const target=document.getElementById('para-jump-target');if(target)target.scrollIntoView({behavior:'smooth',block:'start'});</script>""", unsafe_allow_javascript=True)
                     st.session_state.jump_para_pending = ""
                 else:
                     st.sidebar.warning(f"表示中の一番左の版に段落番号 {jump_number} が見つかりません。")
@@ -1320,8 +1382,29 @@ if active_view == "出力・保存":
     else:
         st.info("比較版を選ぶとHTMLを出力できます。プロジェクトZIPは比較版がなくても保存できます。")
     if versions:
-        st.download_button("全セッションのプロジェクトZIPを保存", project_bundle(), "pdf_compare_project.zip", "application/zip")
+        render_project_download_button("全セッションのプロジェクトZIPを保存", "project_save_export")
     st.caption("自動保存: 無効 · 作業を残す場合はプロジェクトZIPをダウンロードしてください。")
+
+if st.session_state.versions:
+    current_fingerprint = project_content_fingerprint()
+    unsaved_changes = current_fingerprint != st.session_state.get("last_saved_content_fingerprint")
+    if unsaved_changes:
+        st.sidebar.warning("未保存の変更があります。ページを閉じる前にプロジェクトZIPを保存してください。")
+    else:
+        st.sidebar.caption("プロジェクトは現在の内容と一致しています。")
+    guard_script = """<script>
+window.__pdfCompareProjectUnsaved = __DIRTY__;
+if (!window.__pdfCompareBeforeUnloadInstalled) {
+  window.addEventListener("beforeunload", function (event) {
+    if (window.__pdfCompareProjectUnsaved) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  });
+  window.__pdfCompareBeforeUnloadInstalled = true;
+}
+</script>""".replace("__DIRTY__", "true" if unsaved_changes else "false")
+    st.html(guard_script, unsafe_allow_javascript=True)
 
 if st.session_state.versions and st.session_state.autosave_enabled:
     try:

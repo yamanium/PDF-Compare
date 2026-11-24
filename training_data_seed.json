@@ -1,0 +1,342 @@
+{
+  "format": "pdf-compare-training-seed-v1",
+  "source_versions": [
+    "3d1de9327bfd",
+    "888a711a6676",
+    "d09a11e0ae6f"
+  ],
+  "custom_topics": [
+    {
+      "id": "mitigation",
+      "name": "mitigation",
+      "description": "排出削減、緩和目標、エネルギー転換など。"
+    },
+    {
+      "id": "adaptation",
+      "name": "adaptation",
+      "description": "適応、レジリエンス、適応計画・目標など。"
+    },
+    {
+      "id": "transparency",
+      "name": "transparency",
+      "description": "報告、透明性枠組み、測定・報告・検証など。"
+    },
+    {
+      "id": "loss-and-damage",
+      "name": "loss and damage",
+      "description": "損失と損害、対応措置、基金・支援など。"
+    },
+    {
+      "id": "just-transition",
+      "name": "just transition",
+      "description": "公正な移行、雇用、労働者・地域社会への影響など。"
+    },
+    {
+      "id": "finance",
+      "name": "finance",
+      "description": "気候資金、資金目標、資金アクセス・提供など。"
+    },
+    {
+      "id": "technology-capacity",
+      "name": "technology & capacity-building",
+      "description": "技術開発・移転、能力構築、実施手段など。"
+    },
+    {
+      "id": "science-observation",
+      "name": "science & observation",
+      "description": "IPCC、気候科学、地球・海洋観測、早期警戒など。"
+    },
+    {
+      "id": "trade-unilateral",
+      "name": "trade & unilateral measures",
+      "description": "貿易、越境影響、一方的措置、WTO等との対話など。"
+    },
+    {
+      "id": "ecosystems-ocean-mountains",
+      "name": "ecosystems, ocean & mountains",
+      "description": "生態系、森林、海洋、山岳、自然を活用した解決策など。"
+    },
+    {
+      "id": "inclusion-non-party",
+      "name": "inclusion & non-party stakeholders",
+      "description": "ジェンダー、先住民族、若者、地域社会、非国家主体など。"
+    },
+    {
+      "id": "global-stocktake-ambition",
+      "name": "global stocktake & ambition cycle",
+      "description": "GST、NDC、LTS、野心向上サイクルなど。"
+    },
+    {
+      "id": "article-6-carbon-markets",
+      "name": "article 6 & carbon markets",
+      "description": "パリ協定6条、市場・非市場メカニズム、国際協力など。"
+    },
+    {
+      "id": "governance-process",
+      "name": "governance & process",
+      "description": "会合運営、制度、手続き、マンデート、報告・検討プロセスなど。"
+    },
+    {
+      "id": "c1aee43c9685",
+      "name": "principles",
+      "description": "パリ協定、UNFCCCの原則系"
+    }
+  ],
+  "training_data": [
+    {
+      "paragraph_id": "3d1de9327bfd-p1",
+      "version_id": "3d1de9327bfd",
+      "text": "Strongly reaffirms commitment to multilateralism and resolves to remain united in the pursuit of efforts to implement the Convention and achieve the purpose and long-term goals of the Paris Agreement;",
+      "topics": [
+        "governance-process"
+      ],
+      "reviewed_at": "2026-11-22T16:52:42.243895+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p2",
+      "version_id": "3d1de9327bfd",
+      "text": "Recalls that the Paris Agreement will be implemented to reflect equity and the principle of common but differentiated responsibilities and respective capabilities, in the light of different national circumstances;",
+      "topics": [
+        "c1aee43c9685"
+      ],
+      "reviewed_at": "2026-11-22T16:53:51.507226+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p3",
+      "version_id": "3d1de9327bfd",
+      "text": "Acknowledges that the Paris Agreement is working and that the global transition towards low greenhouse gas emissions and climate-resilient development is irreversible, and that significant collective progress towards the Paris Agreement temperature goal has been made, from an expected global temperature increase of more than 4°C according to some projections prior to the adoption of the Agreement to an increase of around 2.6°C based on the full implementation of national climate plans;",
+      "topics": [
+        "science-observation"
+      ],
+      "reviewed_at": "2026-11-22T16:54:20.149838+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p4",
+      "version_id": "3d1de9327bfd",
+      "text": "Emphasizes the importance of promoting the economic and social benefits and opportunities of action on climate change, recognizing the significant drop in the cost of mature renewable energy and zero- and low-emission technologies, and the role of the energy transition in strengthening energy security, affordability and availability;",
+      "topics": [
+        "science-observation"
+      ],
+      "reviewed_at": "2026-11-22T16:54:52.552288+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p5",
+      "version_id": "3d1de9327bfd",
+      "text": "Commends the 167 Parties that, as at 18 November 2026, had communicated their new nationally determined contributions, the 81 Parties that have communicated long-term low greenhouse gas emission development strategies, and 96 Parties that have submitted their national adaptation plans, and urges Parties that have not yet made such submissions to do so as soon as possible;",
+      "topics": [
+        "science-observation",
+        "mitigation"
+      ],
+      "reviewed_at": "2026-11-22T16:55:24.003685+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p20",
+      "version_id": "3d1de9327bfd",
+      "text": "Notes with deep concern that the adverse impacts of climate change are increasing in frequency and severity, with far-reaching consequences for people, livelihoods and ecosystems, including oceans, mountains and the cryosphere, and further expresses concern over the potential of the ongoing El Niño event, compounded by long-term climate change;",
+      "topics": [
+        "adaptation",
+        "science-observation"
+      ],
+      "reviewed_at": "2026-11-22T16:56:01.537651+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p11",
+      "version_id": "3d1de9327bfd",
+      "text": "Recognizes that 1.5°C overshoot and every increment of warming above current levels will increase the frequency and intensity of loss and damage and result in increasingly adverse, and in some cases irreversible, impacts and risks to human and natural systems;",
+      "topics": [
+        "science-observation",
+        "loss-and-damage"
+      ],
+      "reviewed_at": "2026-11-22T16:57:25.374244+00:00"
+    },
+    {
+      "paragraph_id": "d09a11e0ae6f-p78",
+      "version_id": "d09a11e0ae6f",
+      "text": "Requests the secretariat, in collaboration with Parties that provide bilateral climate finance, multilateral development banks, and the multilateral climate funds, including the operating entities of the Financial Mechanism, the Adaptation Fund, the Least Developed Countries Fund and the Special Climate Change Fund, to organize a series of annual workshops from 2027 to 2030 to facilitate the exchange of views, efforts and progress made and next steps in implementing paragraphs 22 to 24 of decision 1/CMA.6 on enhancing access to climate finance, and also requests the Secretariat to prepare technical reports on these workshops for consideration as inputs to the biennial report by the SCF on implementation of decision 1/ CMA 6 and as inputs to the Special Assessment of Access to Climate Finance established in paragraph 34 of decision 1/ CMA 6;",
+      "topics": [
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T16:58:01.911839+00:00"
+    },
+    {
+      "paragraph_id": "d09a11e0ae6f-p110",
+      "version_id": "d09a11e0ae6f",
+      "text": "Encourages Parties and relevant actors to strengthen climate and water resilient health, education, and sanitation systems and infrastructure, with a view to safeguarding children's access to essential services and reducing climate-related risks to health, learning outcomes and overall development;",
+      "topics": [
+        "inclusion-non-party"
+      ],
+      "reviewed_at": "2026-11-22T16:58:46.851517+00:00"
+    },
+    {
+      "paragraph_id": "3d1de9327bfd-p6",
+      "version_id": "3d1de9327bfd",
+      "text": "Also welcomes the implementation of the enhanced transparency framework,1 including submissions of 140 first biennial transparency reports, 112 technical expert reviews, 80 Parties undergoing facilitative, multilateral consideration of progress and the 2026 synthesis report of the first biennial transparency reports;",
+      "topics": [
+        "transparency"
+      ],
+      "reviewed_at": "2026-11-22T17:00:59.809407+00:00"
+    },
+    {
+      "paragraph_id": "d09a11e0ae6f-p15",
+      "version_id": "d09a11e0ae6f",
+      "text": "Recognizes that capabilities and responsibility for action and support are evolving, and welcomes that, as capability grows, more actors can contribute more strongly to global climate action on mitigation, adaptation and finance, on a voluntary basis;",
+      "topics": [
+        "governance-process",
+        "mitigation",
+        "adaptation",
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T17:06:01.318863+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p45",
+      "version_id": "888a711a6676",
+      "text": "Underscores its commitment to the effective implementation of the new collective quantified goal on climate finance and the call for efforts to at least triple adaptation finance by 2035 in the context of decision 1/CMA.6, including paragraph 16, and resolves to accelerate delivery thereof;",
+      "topics": [
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T19:48:15.115170+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p44",
+      "version_id": "888a711a6676",
+      "text": "Emphasizes that just transition pathways can enable accelerated climate action, in this critical decade and beyond, based on equity and the best available science, and highlights the contribution of just transitions to more robust and equitable mitigation and adaptation outcomes; B. Enabling action, including through means of implementation",
+      "topics": [
+        "just-transition"
+      ],
+      "reviewed_at": "2026-11-22T19:48:20.537819+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p46",
+      "version_id": "888a711a6676",
+      "text": "Recalls Article 9, paragraph 1, of the Paris Agreement, according to which developed country Parties shall provide financial resources to assist developing country Parties with respect to both mitigation and adaptation in continuation of their existing obligations under the Convention;",
+      "topics": [
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T19:48:57.460037+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p47",
+      "version_id": "888a711a6676",
+      "text": "Underscores the critical importance of support provided and mobilized by developed country Parties for facilitating enhanced ambition and implementation of mitigation and adaptation by developing country Parties; 先進国の支援の重要性が強調される",
+      "topics": [
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T19:49:02.178016+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p48",
+      "version_id": "888a711a6676",
+      "text": "Recalls that other Parties are encouraged to provide or continue to provide such support voluntarily;",
+      "topics": [
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T19:49:09.770614+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p49",
+      "version_id": "888a711a6676",
+      "text": "Reiterates the importance of reforming the multilateral financial architecture and underscores the need to remove barriers and address disenablers faced by developing country Parties in accessing finance for climate action, including high costs of capital, limited fiscal space and high transaction costs;",
+      "topics": [
+        "finance",
+        "governance-process"
+      ],
+      "reviewed_at": "2026-11-22T19:50:16.385688+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p50",
+      "version_id": "888a711a6676",
+      "text": "Expresses concern regarding the increasing adaptation impacts of climate change and the rising costs of adaptation and stresses the urgent need for the scaled-up provision and mobilization of adequate, predictable, public, grant-based and highly concessional finance for adaptation in developing country Parties, in particular for the least developed countries and small island developing States;",
+      "topics": [
+        "science-observation",
+        "adaptation",
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T19:50:42.842179+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p53",
+      "version_id": "888a711a6676",
+      "text": "Decides to launch, under the guidance of the Presidencies of the eighth and ninth (November 2027) sessions of the Conference of the Parties serving as the Meeting of the Parties to the Paris Agreement, in consultation with Parties, the Antalya–Addis Ababa road map on adaptation and resilience finance, aiming to promote predictable and scaled-up finance for adaptation, including innovative sources, and mechanisms for access thereto, in the context of decision 1/CMA.6 and paragraphs 54–55 of decision 1/CMA.7, and requests the Presidencies to produce a report summarizing the conclusions of the work under the road map for consideration by the Conference of the Parties serving as the meeting of the Parties to the Paris Agreement at its ninth session;",
+      "topics": [
+        "finance"
+      ],
+      "reviewed_at": "2026-11-22T19:51:10.035146+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p35",
+      "version_id": "888a711a6676",
+      "text": "Emphasizes the importance of nature, forests, the ocean and other ecosystems as natural infrastructure for resilience and recognizes that they play a critical role as sinks and reservoirs of greenhouse gases, as well as their importance in the context of overshoot, including for supporting biodiversity and food security and helping communities adapt to climate impacts;",
+      "topics": [
+        "science-observation",
+        "ecosystems-ocean-mountains"
+      ],
+      "reviewed_at": "2026-11-22T19:59:28.962473+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p13",
+      "version_id": "888a711a6676",
+      "text": "Reaffirms its resolve to pursue efforts to limit the temperature increase to 1.5 °C to limit both the magnitude and duration of any temperature overshoot, recognizes the need for deep, rapid and sustained reductions in greenhouse gas emissions in line with 1.5 °C pathways and resolves to close adaptation gaps and enhance action and support to enable countries and communities to better avert, prepare for, adapt to, respond 1.5℃目標に整合した経路という文言追加の一方、 という文言追加の一方、GHG削減の必 to and recover from adverse climate impacts; 要性を強調するから認 された。",
+      "topics": [
+        "science-observation",
+        "mitigation"
+      ],
+      "reviewed_at": "2026-11-22T19:59:43.452132+00:00"
+    },
+    {
+      "paragraph_id": "888a711a6676-p12",
+      "version_id": "888a711a6676",
+      "text": "Recognizes that 1.5 °C overshoot and every increment of warming above current levels will increase the frequency and intensity of loss and damage associated with the adverse effects of climate change and result in increasingly adverse, and in some cases irreversible, impacts and risks to human and natural systems;",
+      "topics": [
+        "loss-and-damage"
+      ],
+      "reviewed_at": "2026-11-22T20:00:39.159910+00:00"
+    }
+  ],
+  "manual_topic_overrides": {
+    "d09a11e0ae6f-p15": [
+      "governance-process",
+      "mitigation",
+      "adaptation",
+      "finance"
+    ],
+    "888a711a6676-p45": [
+      "finance"
+    ],
+    "888a711a6676-p44": [
+      "just-transition"
+    ],
+    "888a711a6676-p46": [
+      "finance"
+    ],
+    "888a711a6676-p47": [
+      "finance"
+    ],
+    "888a711a6676-p48": [
+      "finance"
+    ],
+    "888a711a6676-p49": [
+      "finance",
+      "governance-process"
+    ],
+    "888a711a6676-p50": [
+      "science-observation",
+      "adaptation",
+      "finance"
+    ],
+    "888a711a6676-p53": [
+      "finance"
+    ],
+    "888a711a6676-p13": [
+      "science-observation",
+      "mitigation"
+    ],
+    "888a711a6676-p35": [
+      "science-observation",
+      "ecosystems-ocean-mountains"
+    ],
+    "888a711a6676-p12": [
+      "loss-and-damage"
+    ]
+  }
+}
